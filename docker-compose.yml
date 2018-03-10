@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  logs:
+      build: ./logs
+      command: bash -c "./test"
+      volumes:
+        - ./logs:/var/log/erss
+      ports:
+        - "12345:8080"
+  
+  

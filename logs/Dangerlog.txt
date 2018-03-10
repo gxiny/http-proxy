@@ -1,0 +1,19 @@
+(1).What failures did you handle in your code? how do you handle them?
+1st: we create a socket of our proxy,
+       if bind() or listen() fails, the program will return -1 and terminate
+       2nd: we use a while(1) loop the accept the browser’s request,
+       if accept() fails, we skip this request and continue
+       3rd: In proxy class,
+       if send(), recv() or socket() fails, we end this operation and destroy current data, close the connection and return ASAP
+       4th: In particular method of Proxy class, we use try{} catch(std::exception &e){throw;} block to handle exception
+       5th: We handled 400 and 502 errors, so the request or response header problem will not terminate the proxy.
+
+(2). You should know the exception guarantees you make:
+Basic guarantee
+
+(3). Flaw:
+      We failed to deal with the synchronization issue, when open certain web page like www.bbc.com. Only if we terminate the proxy program the recv()ed data would send back to the browser, otherwise the web page just keeps loading and nothing shows on screen.
+      Our guess is the data race affect the send() and recv() between proxy and browser, so the data won’t be sent. Also, the socket has not been closed appropriately is also a possibility.
+
+(4). Danger:
+      For POST, if we keep the track of request data of browser in a login or sign up situation, we could see the username/password of user or other private information of client.
